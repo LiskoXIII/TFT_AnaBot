@@ -7,8 +7,10 @@ A simple Teamfight Tactics (TFT) Discord bot that will accept a ```!analyze SUMM
 
 * Python 3.12+ (https://python.org)
 * Discord Account (https://discord.com)
-* Discord Bot Token
-* Riot API Key
+* Discord Bot (https://discord.com/developers/applications)
+    * The Bot needs the **Manage Messages** permission
+* Discord Bot Token (https://www.writebots.com/discord-bot-token/)
+* Riot API Key  (https://developer.riotgames.com/)
 
 ### Installation
 
