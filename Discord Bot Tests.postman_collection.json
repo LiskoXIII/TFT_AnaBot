@@ -1,0 +1,288 @@
+{
+	"info": {
+		"_postman_id": "32909e20-1eb2-46cb-acbf-f37ace155708",
+		"name": "Discord Bot Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "43121855"
+	},
+	"item": [
+		{
+			"name": "Get Summoner Data",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"pm.test(\"Response has expected fields\", function () {",
+							"    let jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"puuid\");",
+							"    pm.expect(jsonData).to.have.property(\"gameName\");",
+							"    pm.expect(jsonData).to.have.property(\"tagLine\");",
+							"});",
+							"",
+							"pm.test(\"Username is correct\", function () {",
+							"    let jsonData = pm.response.json();",
+							"    pm.expect(jsonData.gameName).to.eql(\"Loading\");",
+							"});",
+							"",
+							"pm.test(\"Content-Type is application/json\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+							"});",
+							"",
+							"let jsonData = pm.response.json();",
+							"pm.globals.set(\"userId\", jsonData.id);",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Riot-Token",
+						"value": "RGAPI-b744ef7b-e8e7-469f-bfb9-7055f193e9d4",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL_RIOT}}/riot/account/v1/accounts/by-riot-id/{{SUMMONER_NAME}}",
+					"host": [
+						"{{BASE_URL_RIOT}}"
+					],
+					"path": [
+						"riot",
+						"account",
+						"v1",
+						"accounts",
+						"by-riot-id",
+						"{{SUMMONER_NAME}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Match ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Game name is correct\", function () {",
+							"    let jsonData = pm.response.json();",
+							"    pm.expect(jsonData[0]).to.eql(\"NA1_5254012571\");",
+							"});",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Riot-Token",
+						"value": "RGAPI-b744ef7b-e8e7-469f-bfb9-7055f193e9d4",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"content\": \"Edited message from Postman!\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL_RIOT}}/tft/match/v1/matches/by-puuid/{{PUUID}}}/ids?start=0&count=1",
+					"host": [
+						"{{BASE_URL_RIOT}}"
+					],
+					"path": [
+						"tft",
+						"match",
+						"v1",
+						"matches",
+						"by-puuid",
+						"{{PUUID}}}",
+						"ids"
+					],
+					"query": [
+						{
+							"key": "start",
+							"value": "0"
+						},
+						{
+							"key": "count",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Game Info",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							" let jsonData = pm.response.json();",
+							"pm.test(\"Check if there are 8 players\", function () {  ",
+							"    pm.expect(jsonData.metadata.participants.length).to.eql(8);",
+							"});",
+							"",
+							"pm.test(\"Metadata and match_id are present\", function () {",
+							"    pm.expect(jsonData).to.have.property(\"metadata\");",
+							"    pm.expect(jsonData.metadata).to.have.property(\"match_id\");",
+							"    pm.expect(jsonData.metadata.match_id).to.match(/^NA1_/);  // Starts with \"NA1_\"",
+							"});",
+							"",
+							"pm.test(\"Game info has correct keys\", function () {",
+							"    pm.expect(jsonData.info).to.have.property(\"gameId\");",
+							"    pm.expect(jsonData.info).to.have.property(\"game_length\");",
+							"    pm.expect(jsonData.info).to.have.property(\"tft_game_type\");",
+							"});",
+							"",
+							"let participant = jsonData.info.participants[0];",
+							"",
+							"pm.test(\"First participant placement is valid\", function () {",
+							"    pm.expect(participant.placement).to.be.within(1, 8);",
+							"});",
+							"",
+							"pm.test(\"Win flag is a boolean\", function () {",
+							"    pm.expect(participant.win).to.be.a(\"boolean\");",
+							"});",
+							"",
+							"pm.test(\"Participant has companion with required IDs\", function () {",
+							"    pm.expect(participant).to.have.property(\"companion\");",
+							"    pm.expect(participant.companion).to.have.property(\"content_ID\");",
+							"    pm.expect(participant.companion).to.have.property(\"item_ID\");",
+							"});",
+							"",
+							"pm.test(\"Participant has at least 5 traits\", function () {",
+							"    pm.expect(participant.traits.length).to.be.at.least(5);",
+							"});",
+							"",
+							"pm.test(\"Trait TFT13_Rebel exists\", function () {",
+							"    const hasRebel = participant.traits.some(trait => trait.name === \"TFT13_Rebel\");",
+							"    pm.expect(hasRebel).to.be.true;",
+							"});",
+							"",
+							"pm.globals.set(\"latestMatchId\", jsonData.metadata.match_id);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Riot-Token",
+						"value": "RGAPI-b744ef7b-e8e7-469f-bfb9-7055f193e9d4",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://americas.api.riotgames.com/tft/match/v1/matches/{{MATCH_ID}}",
+					"protocol": "https",
+					"host": [
+						"americas",
+						"api",
+						"riotgames",
+						"com"
+					],
+					"path": [
+						"tft",
+						"match",
+						"v1",
+						"matches",
+						"{{MATCH_ID}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL_RIOT",
+			"value": "https://americas.api.riotgames.com",
+			"type": "default"
+		},
+		{
+			"key": "SUMMONER_NAME",
+			"value": "Loading/2830",
+			"type": "string"
+		},
+		{
+			"key": "PUUID",
+			"value": "W_9sZ3ymrgSRoCAUpESazNh_TCjNsZ5CmCED3NI4zmlfoiMEGyP8xsS86jachEJzVidPbRq3f75faw",
+			"type": "default"
+		},
+		{
+			"key": "MATCH_ID",
+			"value": "NA1_5254012571",
+			"type": "string"
+		}
+	]
+}
