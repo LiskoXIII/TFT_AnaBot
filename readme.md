@@ -58,8 +58,6 @@ Testing
             1) https://discord.com/channels this part is the discord url when we try to navigate directly to a server.
             2) /1111111111111111111 This number is the server ID.
             3) /2222222222222222222 This number is the channel ID
-        * The login-url should then look like this:
-https://discord.com/login?redirect_to=/channels/1111111111111111/2222222222222222222
 
 
 * **[Optional/Recommended]** VSCode
