@@ -48,6 +48,20 @@ Testing
 
 #### **Prerequisites**
 
+* Update the ```info``` fixture in the ```test_TFTBot.py```.
+    * ```server_id``` The first part of the URL as show in a web browser.
+    * ```channel_id``` The second part of the URL as shown in a web browser.
+    * ```server``` The server name shown in the client.
+    * ```channel``` the name of the channel under test.
+    * The server-url will look something like this : https://discord.com/channels/1111111111111111/2222222222222222222
+        * The link consists of 3 parts:
+            1) https://discord.com/channels this part is the discord url when we try to navigate directly to a server.
+            2) /1111111111111111111 This number is the server ID.
+            3) /2222222222222222222 This number is the channel ID
+        * The login-url should then look like this:
+https://discord.com/login?redirect_to=/channels/1111111111111111/2222222222222222222
+
+
 * **[Optional/Recommended]** VSCode
     * With Python extension installed (https://marketplace.visualstudio.com/items/?itemName=ms-python.python)
 
